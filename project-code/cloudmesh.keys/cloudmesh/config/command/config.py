@@ -21,8 +21,8 @@ class ConfigCommand(PluginCommand):
 
            Usage:
              config  -h | --help
-             config encrypt FILE_IN FILE_OUT
-             config decrypt FILE_IN FILE_OUT
+             config encrypt [SOURCE] [DESTINATION]
+             config decrypt [SOURCE] [DESTINATION]
              config set ATTRIBUTE VALUE
 
 
@@ -54,13 +54,10 @@ class ConfigCommand(PluginCommand):
 
         """
 
-        arguments.file_in = arguments['FILE_IN']
-        arguments.file_out = arguments['FILE_OUT']
-
         pprint(arguments)
 
         m = Manager()
-        e = EncryptFile(arguments.file_in, arguments.file_out)
+        e = EncryptFile(arguments.SOURCE, arguments.DESTINATION)
         if arguments.encrypt:
             e.encrypt()
             print("encrypt file")
@@ -68,10 +65,10 @@ class ConfigCommand(PluginCommand):
 
         elif arguments.decrypt:
             #if the file is existed
-            if not os.path.exists(arguments.file_out):
-                os.system(r"touch {}".format(arguments.file_out))  # create the file
+            if not os.path.exists(arguments.DESTINATION):
+                os.system(r"touch {}".format(arguments.DESTINATION))  # create the file
 
-            e.decrypt(arguments.file_in, arguments.file_out)
+            e.decrypt(arguments.SOURCE, arguments.DESTINATION)
             print("decrypt file")
             return ""
 
