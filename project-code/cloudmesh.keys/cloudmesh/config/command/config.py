@@ -1,11 +1,12 @@
 from __future__ import print_function
 from pprint import pprint
 import os
-from cloudmesh.key.api.manager import Manager
+from cloudmesh.security.encrypt import EncryptFile
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command
-
-from cloudmesh.config.api.encryption import EncryptFile
+from cloudmesh.common.util import path_expand
+from cloudmesh.terminal.Terminal import VERBOSE
+from cloudmesh.common.console import Console
 
 
 class ConfigCommand(PluginCommand):
@@ -18,60 +19,102 @@ class ConfigCommand(PluginCommand):
     def do_config(self, args, arguments):
         """
         ::
-
            Usage:
              config  -h | --help
-             config encrypt [SOURCE] [DESTINATION]
-             config decrypt [SOURCE] [DESTINATION]
-             config set ATTRIBUTE VALUE
-
-
+             config encrypt [SOURCE]
+             config decrypt [SOURCE]
+             config edit [SOURCE]
+             config set ATTRIBUTE=VALUE
+             config set ATTRIBUTE
+             config ssh keygen
+             config ssh verify
+             config ssh check
+             config ssh pem
            Arguments:
-             VMS            Para,eterized list of virtual machines
-             CLOUDS         The clouds
-             NAME           The name of the key.
-             SOURCE         db, ssh, all
-             KEYNAME        The name of a key. For key upload it defaults to the default key name.
-             FORMAT         The format of the output (table, json, yaml)
-             FILENAME       The filename with full path in which the key
-                            is located
-
+             SOURCE           the file to encrypted or decrypted.
+                              an .enc is added to the filename or removed form it
+                              dependent of if you encrypt or decrypt
+             ATTRIBUTE=VALUE  sets the attribute with . notation in the
+                              configuration file.
+             ATTRIBUTE        reads the attribute from the terminal and sets it
+                              in the configuration file
+                              If the attribute is a password, * is written instead
+                              of the character included
            Options:
-              --dir=DIR                     the directory with keys [default: ~/.ssh]
-              --format=FORMAT               the format of the output [default: table]
-              --source=SOURCE               the source for the keys [default: cm]
-              --username=USERNAME           the source for the keys [default: none]
               --name=KEYNAME                The name of a key
-
-
            Description:
-
-                ssh-keygen
+             config check
+                checks if the ssh key ~/.ssh/id_rsa has a password. Verifies it
+                through entering the passphrase
+             Key generation
+                Keys must be generated with
+                    ssh-keygen -t rsa -m pem
+                    openssl rsa -in ~/.ssh/id_rsa -out ~/.ssh/id_rsa.pem
+                or
+                    cms config ssh keygen
+                Key validity can be checked with
+                    cms config check
+                The key password can be verified with
+                    cms config verify
                 ssh-add
-
-                cms config encrypt ~/.cloudmesh/cloudmesh4.yaml ~/.cloudmesh/cloudmesh4.yamlz
-                cms config decrype ~/.cloudmesh/cloudmesh4.yamlz ~/.cloudmesh/cloudmesh4.enc.yaml
-
+                cms config encrypt ~/.cloudmesh/cloudmesh4.yaml
+                cms config decrypt ~/.cloudmesh/cloudmesh4.yaml
+                config set ATTRIBUTE=VALUE
+                    config set profile.name=Gregor
         """
+        # d = Config()                #~/.cloudmesh/cloudmesh4.yaml
+        # d = Config(encryted=True)   # ~/.cloudmesh/cloudmesh4.yaml.enc
 
-        pprint(arguments)
+        arguments.SOURCE = arguments.SOURCE or \
+                           path_expand("~/.cloudmesh/cloudmesh4.yaml")
+        arguments.DESTINATION = arguments.SOURCE + ".enc"
 
-        m = Manager()
+        VERBOSE.print(arguments, verbose=9)
+
         e = EncryptFile(arguments.SOURCE, arguments.DESTINATION)
+
         if arguments.encrypt:
+
             e.encrypt()
-            print("encrypt file")
+            Console.ok("{SOURCE} --> {DESTINATION}".format(**arguments))
+            Console.ok("file encrypted")
             return ""
 
         elif arguments.decrypt:
-            #if the file is existed
+            # if the file is existed
             if not os.path.exists(arguments.DESTINATION):
-                os.system(r"touch {}".format(arguments.DESTINATION))  # create the file
+                Console.error(
+                    "encrypted file {DESTINATION} does not exist".format(
+                        **arguments))
 
             e.decrypt(arguments.SOURCE, arguments.DESTINATION)
-            print("decrypt file")
+            Console.ok("{DESTINATION} --> {SOURCE}".format(**arguments))
+
+            Console.ok("file decrypted")
             return ""
 
+        elif arguments.ssh and arguments.verify:
+            e.pem_verify()
 
+        elif arguments.ssh and arguments.check:
+            key = "~/.ssh/id_rsa"
+            r = e.check_key(key)
+            if r:
+                Console.ok(f"Key {key} is valid")
+            # does not work as it does not change it to pem format
+            # e.check_passphrase()
+
+        elif arguments.ssh and arguments.pem:
+
+            r = e.pem_create()
+
+        elif arguments.set:
+
+            Console.error("not implemented")
+            raise NotImplementedError
+
+        elif arguments.ssh and arguments.keygen:
+
+            e.ssh_keygen()
 
         return ""
