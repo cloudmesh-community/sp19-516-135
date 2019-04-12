@@ -1,0 +1,11 @@
+six
+python-hostlist
+simplejson
+oyaml
+colorama
+psutil
+prettytable
+ruamel.yaml
+pathlib
+pathlib2
+future

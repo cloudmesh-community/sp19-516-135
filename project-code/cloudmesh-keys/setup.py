@@ -41,11 +41,11 @@ with open('README.md') as f:
 
 
 
-NAME = "cloudmesh.keys"
+NAME = "cloudmesh-keys"
 DESCRIPTION = "A command called keys and foo for the cloudmesh shell"
 AUTHOR = "Gregor von Laszewski"
 AUTHOR_EMAIL = "laszewski@gmail.com"
-URL = "https://github.com/cloudmesh/cloudmesh.keys"
+URL = "https://github.com/cloudmesh/cloudmesh-keys"
 
 
 setup(
