@@ -86,6 +86,10 @@ class ConfigCommand(PluginCommand):
                 Console.error(
                     "encrypted file {DESTINATION} does not exist".format(
                         **arguments))
+                path = arguments.DESTINATION
+                # if destination is not existed, create it
+                file = open(path, 'wr')
+                file.close()
 
             e.decrypt(arguments.SOURCE, arguments.DESTINATION)
             Console.ok("{DESTINATION} --> {SOURCE}".format(**arguments))

@@ -72,8 +72,7 @@ setup(
     install_requires=requiers,
     tests_require=[
         "flake8",
-        "coverage",
-        "tox",
+        "coverage"
     ],
     zip_safe=False,
     namespace_packages=['cloudmesh'],
