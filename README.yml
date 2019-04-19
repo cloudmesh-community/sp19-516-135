@@ -5,3 +5,8 @@ owner:
   hid: sp19-516-135
   community: e516
   semester: sp19
+project:
+  - title: Key Management
+    url: https://github.com/cloudmesh-community/sp19-516-135/blob/master/project-code/cloudmesh-keys/README.md
+    pytest:
+      - TBD
