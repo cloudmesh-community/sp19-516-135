@@ -1,6 +1,6 @@
 # Encrytion/Decryption
 
-The Google Drive API needs the following two 2 credentials files. 
+we can encrypt and decrypt files using config2.py. 
 * `client_secret.json` 
 * `google-drive-credentials.json`  
 
