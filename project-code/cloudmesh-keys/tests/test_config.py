@@ -13,9 +13,7 @@ from __future__ import print_function
 
 import os
 
-from cloudmesh.common.ConfigDict import ConfigDict
-from cloudmesh.common.util import HEADING
-from cloudmesh.config.encryption.py
+from cloudmesh.config2.api.encryption import EncryptFile
 
 # noinspection PyMethodMayBeStatic,PyMethodMayBeStatic,PyMethodMayBeStatic,PyPep8Naming,PyBroadException,PyBroadException
 class Test_configdict:
