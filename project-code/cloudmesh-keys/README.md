@@ -2,12 +2,15 @@
 
 We can encrypt and decrypt files using generated random key. The workflow are decribed as following:
 
-**First step** Key Generation: You need have a public-private key which used to encrypt and decrypt files. Keys must be generated with `ssh-keygen -t rsa -m pem` , `openssl rsa -in ~/.ssh/id_rsa -out ~/.ssh/id_rsa.pem` or you can run `config ssh keygen` to generate a key pair. If you have, you can skip this step.
-
+**First step** Key Generation: You need have a public-private key which used to encrypt and decrypt files. Keys must be generated with `ssh-keygen -t rsa -m pem` , `openssl rsa -in ~/.ssh/id_rsa -out ~/.ssh/id_rsa.pem` or you can run `cms config ssh keygen` to generate a key pair. If you have, you can skip this step.
 
 **Second step** Key Validation: 
 * Key validity can be checked with `cms config check`
 * The key password can be verified with `cms config verify`
+
+**Third step** Encrytion: We will first generate a random key, encrypt that random key against the public key of the other person and use that random key to encrypt the actual file with using symmetric encryption. You can use `config encrypt [SOURCE]`  to encrypt both random key and file. SOURCE is the file to encrypted or decrypted and an .enc is added to the filename or removed form it. 
+
+
 
 
 
