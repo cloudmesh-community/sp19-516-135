@@ -2,10 +2,10 @@
 
 We can encrypt and decrypt files using generated random key. The workflow are decribed as following:
 
-**First step** You need have a public-private key which used to encrypt and decrypt files. If you don't have, you can run `config ssh keygen` to generate a key pair. If you have, you can skip this step.
+**First step** Key Generation: You need have a public-private key which used to encrypt and decrypt files. Keys must be generated with `ssh-keygen -t rsa -m pem` , `openssl rsa -in ~/.ssh/id_rsa -out ~/.ssh/id_rsa.pem` or you can run `config ssh keygen` to generate a key pair. If you have, you can skip this step.
 
 
-
+**Second step** You need have a public-private key which used to encrypt and decrypt files. If you don't have, . If you have, you can skip this step.
 
 * `client_secret.json` 
 * `google-drive-credentials.json`  
