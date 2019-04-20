@@ -2,7 +2,7 @@
 
 We can encrypt and decrypt files using generated random key. The workflow are decribed as following:
 
-**First step** You need have a public-private key which used to encrypt and decrypt files. If you don't have, you can run 'config ssh keygen' to generate a key pair. If you have, you can skip this step.
+**First step** You need have a public-private key which used to encrypt and decrypt files. If you don't have, you can run `config ssh keygen` to generate a key pair. If you have, you can skip this step.
 
 
 
