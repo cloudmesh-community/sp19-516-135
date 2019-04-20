@@ -7,6 +7,6 @@ owner:
   semester: sp19
 project:
   - title: Cloudmesh Yaml file Encryption
-    url: https://cloudmesh.github.io/cloudmesh-manual/configuration/encryption.html
+    url: https://github.com/cloudmesh/cloudmesh-manual/blob/master/docs-source/source/configuration/encryption.md
     pytest:
       - TBD
