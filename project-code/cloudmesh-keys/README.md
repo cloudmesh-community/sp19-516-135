@@ -1,6 +1,6 @@
 # Encrytion/Decryption
 
-We can encrypt and decrypt files using config2.py. 
+We can encrypt and decrypt files using generated random key. 
 * `client_secret.json` 
 * `google-drive-credentials.json`  
 
