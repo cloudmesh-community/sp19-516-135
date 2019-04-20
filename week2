@@ -1,4 +1,5 @@
 1. finish reading chapter 4 and 5 
 2. finding a spelling error in chapter 5 
+
 page 148: sae->same
 “One of the driving factors in cloud computing and the rise of large scale data centers is the ability to use server virtualization to place more than one server on the same hardware. Formerly the services were hosted on their own servers. Today they are managed on the sae hardware although they look to the customer like separate servers.”
