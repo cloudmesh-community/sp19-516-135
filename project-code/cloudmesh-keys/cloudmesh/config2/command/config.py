@@ -1,14 +1,15 @@
 from __future__ import print_function
 from pprint import pprint
 import os
-from cloudmesh.security.encrypt import EncryptFile
+from cloudmesh.config2.api.encryption import EncryptFile
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command
 from cloudmesh.common.util import path_expand
-from cloudmesh.terminal.Terminal import VERBOSE
+#from cloudmesh.terminal.Terminal import VERBOSE
 from cloudmesh.common.console import Console
+from cloudmesh.common.ConfigDict import ConfigDict
 
-
+from cloudmesh.management.configuration.config import Config
 class ConfigCommand(PluginCommand):
 
     # see https://github.com/cloudmesh/client/blob/master/cloudmesh_client/shell/plugins/KeyCommand.py
@@ -69,29 +70,20 @@ class ConfigCommand(PluginCommand):
                            path_expand("~/.cloudmesh/cloudmesh4.yaml")
         arguments.DESTINATION = arguments.SOURCE + ".enc"
 
-        VERBOSE.print(arguments, verbose=9)
-
-        e = EncryptFile(arguments.SOURCE, arguments.DESTINATION)
+        e = EncryptFile(arguments.SOURCE, arguments.DESTINATION,None)
 
         if arguments.encrypt:
-
+            e.getPublicKey()
+            e.getRandonPassword()
             e.encrypt()
+            e.encryptPassword()
             Console.ok("{SOURCE} --> {DESTINATION}".format(**arguments))
             Console.ok("file encrypted")
             return ""
 
         elif arguments.decrypt:
-            # if the file is existed
-            if not os.path.exists(arguments.DESTINATION):
-                Console.error(
-                    "encrypted file {DESTINATION} does not exist".format(
-                        **arguments))
-                path = arguments.DESTINATION
-                # if destination is not existed, create it
-                file = open(path, 'wr')
-                file.close()
-
-            e.decrypt(arguments.SOURCE, arguments.DESTINATION)
+            e.decryptRandomKey()
+            e.decrypt(arguments.SOURCE, arguments.DESTINATION,None)
             Console.ok("{DESTINATION} --> {SOURCE}".format(**arguments))
 
             Console.ok("file decrypted")
@@ -108,14 +100,19 @@ class ConfigCommand(PluginCommand):
             # does not work as it does not change it to pem format
             # e.check_passphrase()
 
+
         elif arguments.ssh and arguments.pem:
 
             r = e.pem_create()
 
-        elif arguments.set:
+        elif arguments.edit:
+            e.edit()
 
-            Console.error("not implemented")
-            raise NotImplementedError
+        elif arguments.set:
+            element = arguments.ATTRIBUTE
+            value = arguments.VALUE
+            filename = arguments.SOURCE or "/Users/xiaoyue/.cloudmesh/cloudmesh4.yaml"
+            e.set(filename,element,value)
 
         elif arguments.ssh and arguments.keygen:
 

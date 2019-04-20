@@ -1,6 +1,14 @@
 import os
 from cloudmesh.common.util import path_expand
-
+import os
+from cloudmesh.common.util import path_expand
+from cloudmesh.common.dotdict import dotdict
+from cloudmesh.DEBUG import VERBOSE
+import platform
+from getpass import getpass
+from cloudmesh.common.console import Console
+from cloudmesh.common.Shell import Shell
+from cloudmesh.common.ConfigDict import ConfigDict
 
 class EncryptFile(object):
     def __init__(self, file_in, file_out, certificate,debug=False,):
@@ -77,6 +85,61 @@ class EncryptFile(object):
     def decrypt(self):
         command = path_expand(
             "openssl enc -d -aes-256-cbc -in {file_out} -out {file_out_plain} -pass file:{password_enc_plain}".format(**self.data))
+        self._execute(command)
+
+    def ssh_keygen(self):
+        command = "ssh-keygen -t rsa -m pem"
+        os.system(command)
+        command = ""
+        self.pem_create()
+
+    def pem_create(self):
+        command = path_expand("openssl rsa -in {key} -pubout  > {pem}".format(**self.data))
+
+        # command = path_expand("openssl rsa -in id_rsa -pubout  > {pem}".format(**self.data))
+        self._execute(command)
+        command = "chmod go-rwx {key}.pem".format(**self.data)
+        self._execute(command)
+
+    def pem_verify(self):
+        """
+        this does not work
+        :return:
+        """
+        if platform.system().lower() == 'darwin':
+            command = "security verify-cert -c {pem}".format(**self.data)
+            self._execute(command)
+
+        command = "openssl verify  {pem}".format(**self.data)
+        self._execute(command)
+
+
+    def check_key(self, filename):
+        error = False
+        with open(self.data["key"]) as key:
+            content = key.read()
+
+        if "BEGIN RSA PRIVATE KEY" not in content:
+            Console.error("Key is not a pure RSA key")
+            error = True
+        if "Proc-Type: 4,ENCRYPTED" in content and "DEK-Info:" not in content:
+            Console.error("Key has no passphrase")
+            error = True
+
+        if error:
+            Console.error("Key is not valid for cloudmesh")
+            return False
+        else:
+            return True
+
+
+    def set(self,filename, key, value):
+
+        configDict = ConfigDict(filename)
+        configDict[key]= value
+
+    def edit(self):
+        command = "vim {file_in}".format(**self.data)
         self._execute(command)
 
 if __name__ == "__main__":
