@@ -24,18 +24,25 @@ class Test_configdict:
 
     def test_getRandonPassword(self):
         self.e.getRandonPassword()
-
+        # assert missing
+        
     def test_encrypt(self):
         self.e.encrypt()
-
+        # assert missing
+        
     def test_encryptPassword(self):
         self.e.encryptPassword()
+        # assert missing
+        
 
     def test_decryptRandomKey(self):
         self.e.decryptRandomKey()
+        # assert missing
 
     def test_decrypt(self):
         self.e.decrypt()
+        # assert missing
+
 
     def test_ssh_keygen(self):
         self.e.ssh_keygen()
@@ -56,3 +63,5 @@ class Test_configdict:
 
     def test_edit(self):
         self.e.edit()
+
+
