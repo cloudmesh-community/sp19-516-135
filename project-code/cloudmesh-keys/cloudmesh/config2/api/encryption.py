@@ -12,7 +12,7 @@ from cloudmesh.common.ConfigDict import ConfigDict
 
 class EncryptFile(object):
     def __init__(self, file_in, file_out, certificate,debug=False,):
-        plain_file = file_out + 'plain'
+        plain_file = file_out + '.plain'
         self.data = {
             'file_in': file_in,
             'file_out': file_out,
