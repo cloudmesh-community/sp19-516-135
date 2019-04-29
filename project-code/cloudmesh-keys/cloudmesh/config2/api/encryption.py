@@ -9,6 +9,7 @@ from getpass import getpass
 from cloudmesh.common.console import Console
 from cloudmesh.common.Shell import Shell
 from cloudmesh.common.ConfigDict import ConfigDict
+import shutil
 
 class EncryptFile(object):
     def __init__(self, file_in, file_out, certificate,debug=False,):
@@ -141,6 +142,15 @@ class EncryptFile(object):
     def edit(self):
         command = "vim {file_in}".format(**self.data)
         self._execute(command)
+
+    def delete_folder(self):
+
+        # delete the tmp folder
+        path = '~/.cloudmesh/tmp'
+        folder = os.path.exists(path)
+        if folder:
+            shutil.rmtree(path)
+
 
 if __name__ == "__main__":
     '''

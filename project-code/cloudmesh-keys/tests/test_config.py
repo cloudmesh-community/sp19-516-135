@@ -6,9 +6,15 @@ pytest -v --capture=no tests/test_config.py
 from __future__ import print_function
 
 import os
+import shutil
 import  time
-from cloudmesh.config2.api.encryption import EncryptFile
+from cloudmesh.management.configuration.config import Config
+from cloudmesh.common.ConfigDict import ConfigDict
+#from cloudmesh.management.configuration.security.config import Config
 
+
+from cloudmesh.config2.api.encryption import EncryptFile
+from cloudmesh.common.util import path_expand
 import pytest
 import datetime
 
@@ -20,15 +26,33 @@ class Test_configdict:
 
 
     def setup_class(self):
-        self.e = EncryptFile('~/.cloudmesh/cloudmesh.yaml', '~/.cloudmesh/cloudmesh.yaml.enc', '')
+
+        self.mkdirer(self)
+        self.copy_file(self)
+
+        self.e = EncryptFile('~/.cloudmesh/tmp/cloudmesh4.yaml', '~/.cloudmesh/tmp/cloudmesh4.yaml.enc', '')
+
+
+    def mkdirer(self):
+        path = path_expand('~/.cloudmesh/tmp')
+        folder = os.path.exists(path)
+        if not folder:
+            os.makedirs(path)
+
+    def copy_file(self):
+
+        source = path_expand('~/.cloudmesh/cloudmesh4.yaml')
+        target =path_expand('~/.cloudmesh/tmp')
+        shutil.copy(source, target)
 
 
     def test_getRandonPassword(self):
         self.e.getRandonPassword()
-        exists = os.path.isfile('/Users/xiaoyue/.cloudmesh/key.bin')
+        # use this for all
+        exists = os.path.isfile(path_expand('~/.cloudmesh/key.bin'))
         assert exists
         if exists:
-            f = open('/Users/xiaoyue/.cloudmesh/key.bin', 'r')
+            f = open(path_expand('~/.cloudmesh/key.bin'), 'r')
             password = f.readlines()[0]
             f.close()
         else:
@@ -38,12 +62,12 @@ class Test_configdict:
 
     def test_encrypt(self):
         self.e.encrypt()
-        exists = os.path.isfile('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml.enc')
+        exists = os.path.isfile(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml.enc'))
         assert exists
-        enc_size = os.path.getsize('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml.enc')
+        enc_size = os.path.getsize(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml.enc'))
         enc_size = enc_size *10000/ float(1024 * 1024)
         print(enc_size)
-        orginal_size= os.path.getsize('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml')
+        orginal_size= os.path.getsize(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml'))
         orginal_size = orginal_size *10000/ float(1024 * 1024)
         print(orginal_size)
         assert abs(enc_size - orginal_size) < 10
@@ -52,9 +76,9 @@ class Test_configdict:
 
     def test_encryptPassword(self):
         self.e.encryptPassword()
-        exists = os.path.isfile('/Users/xiaoyue/.cloudmesh/key.bin.enc')
+        exists = os.path.isfile(path_expand('~/.cloudmesh/key.bin.enc'))
         assert exists
-        times = os.path.getmtime('/Users/xiaoyue/.cloudmesh/key.bin.enc')
+        times = os.path.getmtime(path_expand('~/.cloudmesh/key.bin.enc'))
         timestamp = time.localtime(times)
         fileCreatTime = time.strftime('%Y-%m-%d %H:%M:%S', timestamp)
         print (fileCreatTime)
@@ -70,9 +94,9 @@ class Test_configdict:
 
     def test_decryptRandomKey(self):
         self.e.decryptRandomKey()
-        exists = os.path.isfile('/Users/xiaoyue/.cloudmesh/key.bin.enc.plain')
+        exists = os.path.isfile(path_expand('~/.cloudmesh/key.bin.enc.plain'))
         assert exists
-        times = os.path.getmtime('/Users/xiaoyue/.cloudmesh/key.bin.enc.plain')
+        times = os.path.getmtime(path_expand('~/.cloudmesh/key.bin.enc.plain'))
         timestamp = time.localtime(times)
         fileCreatTime = time.strftime('%Y-%m-%d %H:%M:%S', timestamp)
         print (fileCreatTime)
@@ -85,12 +109,12 @@ class Test_configdict:
 
     def test_decrypt(self):
         self.e.decrypt()
-        exists = os.path.isfile('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml.enc.plain')
+        exists = os.path.isfile(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml.enc.plain'))
         assert exists
-        dec_size = os.path.getsize('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml.enc.plain')
+        dec_size = os.path.getsize(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml.enc.plain'))
         dec_size = dec_size *10000/ float(1024 * 1024)
         print(dec_size)
-        orginal_size= os.path.getsize('/Users/xiaoyue/.cloudmesh/cloudmesh.yaml')
+        orginal_size= os.path.getsize(path_expand('~/.cloudmesh/tmp/cloudmesh4.yaml'))
         orginal_size = orginal_size *10000/ float(1024 * 1024)
         print(orginal_size)
         assert abs(dec_size - orginal_size) < 2
@@ -98,10 +122,11 @@ class Test_configdict:
         assert True
 
 
+
     def test_ssh_keygen(self):
         self.e.ssh_keygen()
-        for file in os.listdir("/Users/xiaoyue/.ssh"):
-            file_path = os.path.join("/Users/xiaoyue/.ssh", file)
+        for file in os.listdir(path_expand("~/.ssh")):
+            file_path = os.path.join(path_expand("~/.ssh"), file)
             if not os.path.isdir(file_path):
                 if os.path.splitext(file)[1] == '.pub':
                     flag = True
@@ -113,8 +138,8 @@ class Test_configdict:
 
     def test_pem_create(self):
         self.e.pem_create()
-        for file in os.listdir("/Users/xiaoyue/.ssh"):
-            file_path = os.path.join("/Users/xiaoyue/.ssh", file)
+        for file in os.listdir(path_expand("~/.ssh")):
+            file_path = os.path.join(path_expand("~/.ssh"), file)
             if not os.path.isdir(file_path):
                 if os.path.splitext(file)[1] == '.pub':
                     flag = True
@@ -128,11 +153,11 @@ class Test_configdict:
 
 
     def test_set(self):
-       filename =  "/Users/xiaoyue/.cloudmesh/cloudmesh4.yaml"
+       filename = path_expand( "~/.cloudmesh/tmp/cloudmesh4.yaml")
        key = "cloudmesh.profile.firstname"
        value = "Gregor"
        self.e.set(filename,key,value)
-       times = os.path.getmtime('/Users/xiaoyue/.cloudmesh/cloudmesh4.yaml')
+       times = os.path.getmtime(path_expand("~/.cloudmesh/tmp/cloudmesh4.yaml"))
        timestamp = time.localtime(times)
        fileUpdateTime = time.strftime('%Y-%m-%d %H:%M:%S', timestamp)
        print(fileUpdateTime)
@@ -144,8 +169,43 @@ class Test_configdict:
 
 
 
+
+
+
+    def test__config(self):
+
+        #test original yaml file
+
+        configDict = ConfigDict( path_expand("~/.cloudmesh/cloudmesh4.yaml"))
+        assert configDict.__getitem__("meta.version")
+
+
+        #test tmp_yaml file
+        configDict = ConfigDict(path_expand("~/.cloudmesh/tmp/cloudmesh4.yaml"))
+        assert configDict.__getitem__("meta.version")
+
+
+        # test enc_yaml file
+
+
+        with pytest.raises(UnicodeDecodeError) as e:
+            con = Config(path_expand("~/.cloudmesh/tmp/cloudmesh4.yaml.enc"))
+            assert con
+
+
+        # test dec_yaml file
+        config = Config(config_path="~/.cloudmesh/cloudmesh4.yaml.enc")
+        assert configDict.__getitem__("meta.version")
+
+
     def test_edit(self):
         self.e.edit()
         assert True
+
+
+    def delete_folder(self):
+        self.e.delete_folder()
+
+
 
 
