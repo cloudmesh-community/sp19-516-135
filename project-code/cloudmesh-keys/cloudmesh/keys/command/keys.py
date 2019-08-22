@@ -10,7 +10,7 @@ from cloudmesh.management.configuration.config import Config
 from cloudmesh.mongo.CmDatabase import CmDatabase
 from cloudmesh.shell.command import PluginCommand
 from cloudmesh.shell.command import command
-from cloudmesh.shell.variables import Variables
+from cloudmesh.common.variables import Variables
 from cloudmesh.compute.libcloud.Provider import  Provider
 
 
@@ -69,7 +69,7 @@ class KeysCommand(PluginCommand):
 
            Description:
 
-               Please note that some values are read from the cloudmesh4.yaml
+               Please note that some values are read from the cloudmesh.yaml
                file. One such value is cloudmesh.profile.user
 
                Manages public keys is an essential component of accessing
@@ -80,7 +80,7 @@ class KeysCommand(PluginCommand):
 
                 keys list --source=git  [--username=USERNAME]
                     lists all keys in git for the specified user. If the
-                    name is not specified it is read from cloudmesh4.yaml
+                    name is not specified it is read from cloudmesh.yaml
                 keys list --source=ssh  [--dir=DIR] [--format=FORMAT]
                     lists all keys in the directory. If the directory is not
                     specified the default will be ~/.ssh
@@ -124,7 +124,7 @@ class KeysCommand(PluginCommand):
                without uploading the information to the clouds. If no groupname
                is specified the groupname default is assumed. If no cloudnames
                are specified, all active clouds are assumed. active clouds can be
-               set in the cloudmesh4.yaml file.
+               set in the cloudmesh.yaml file.
 
                 keys group delete [GROUPNAMES] [NAMES] [--dryrun]
                     deletes the named keys from the named groups.

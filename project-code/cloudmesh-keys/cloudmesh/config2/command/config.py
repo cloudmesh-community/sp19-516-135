@@ -58,23 +58,23 @@ class ConfigCommand(PluginCommand):
                 The key password can be verified with
                     cms config verify
                 ssh-add
-                cms config encrypt ~/.cloudmesh/cloudmesh4.yaml
-                cms config decrypt ~/.cloudmesh/cloudmesh4.yaml
+                cms config encrypt ~/.cloudmesh/cloudmesh.yaml
+                cms config decrypt ~/.cloudmesh/cloudmesh.yaml
                 config set ATTRIBUTE=VALUE
                     config set profile.name=Gregor
         """
-        # d = Config()                #~/.cloudmesh/cloudmesh4.yaml
-        # d = Config(encryted=True)   # ~/.cloudmesh/cloudmesh4.yaml.enc
+        # d = Config()                #~/.cloudmesh/cloudmesh.yaml
+        # d = Config(encryted=True)   # ~/.cloudmesh/cloudmesh.yaml.enc
 
         arguments.SOURCE = arguments.SOURCE or \
-                           path_expand("~/.cloudmesh/cloudmesh4.yaml")
+                           path_expand("~/.cloudmesh/cloudmesh.yaml")
         arguments.DESTINATION = arguments.SOURCE + ".enc"
 
         e = EncryptFile(arguments.SOURCE, arguments.DESTINATION,None)
 
         if arguments.encrypt:
             e.getPublicKey()
-            e.getRandonPassword()
+            e.getRandomPassword()
             e.encrypt()
             e.encryptPassword()
             Console.ok("{SOURCE} --> {DESTINATION}".format(**arguments))
@@ -111,7 +111,7 @@ class ConfigCommand(PluginCommand):
         elif arguments.set:
             element = arguments.ATTRIBUTE
             value = arguments.VALUE
-            filename = arguments.SOURCE or "/Users/xiaoyue/.cloudmesh/cloudmesh4.yaml"
+            filename = arguments.SOURCE or "/Users/xiaoyue/.cloudmesh/cloudmesh.yaml"
             e.set(filename,element,value)
 
         elif arguments.ssh and arguments.keygen:
